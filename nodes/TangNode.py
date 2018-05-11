@@ -4,7 +4,7 @@ NODE_STATE = ['t_sus', 't_sslp', 't_inf', 't_islp']
 
 
 class TangNode(object):
-    def __init__(self, pos, id_no, sta, T, beta, rou):
+    def __init__(self, pos, id_no, sta, beta, rou):
         self.id = id_no
         self.x = pos[0]
         self.y = pos[1]

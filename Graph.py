@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import math
-import numpy as np
-import random
 
 import matplotlib.pyplot as plt
 import networkx as nx
 
-from nodes.RandomNode import RandomNode
+from model.my_model_sim import my_model_sim
+from model.org_model_sim import org_model_sim
+from model.tang_model_sim import tang_model_sim
 from nodes.RandomPosition import get_random_position
 
 
@@ -19,136 +19,87 @@ def d(node1, node2):
     return round(dis, 2)
 
 
-def random_np(low, high, nodes_num):
-    m = np.zeros((nodes_num, nodes_num))
-    for i in range(nodes_num):
-        for j in range(nodes_num):
-            m[i, j] = random.uniform(low, high)
-    return m
+def avg_lists(lists, l_num):
+    avg = []
+    for i in range(len(lists[0])):
+        sum = 0
+        for j in range(l_num):
+            sum += lists[j][i]
+        avg.append(int(sum/l_num))
+    return avg
 
 
 def draw_graph():
-    keyFrames = []
+    lines = []
     density = 0.15
-    side_width = 200
-    side_height = 100
-    sim_time = 150
+    side_width = 100
+    side_height = 50
+    sim_time = 30
+    # my model
+    my_open = 0.5
+    my_spr = 0.5
+    my_eta_low = 1
+    my_eta_high = 1
+    # tang model
+    tang_beta = 0.3
+    tang_rou = 0
+    tang_a = 0.5
+    tang_s = 0.5
     # 病毒位置
-    v_x = 100
-    v_y = 50
+    v_x = 50
+    v_y = 25
     # 补丁包位置及时间
-    r_x = 100
-    r_y = 50
-    r_t = 10
+    r_x = 50
+    r_y = 25
+    r_t = sim_time+1
     # 传播距离
-    r = 5
-    nodes = []
+    g_r = 7
     # 得到随机节点的坐标
     rd_nodes_pos = get_random_position(density, side_width, side_height)
     pos = {i: (rd_nodes_pos[i][0], rd_nodes_pos[i][1])
            for i in range(len(rd_nodes_pos))}
     nodes_num = len(rd_nodes_pos)
-    nodes_color = ['sus'] * nodes_num
 
-    # 创建用于状态处理的随机节点
-    for rd_node in rd_nodes_pos:
-        rn = RandomNode(rd_node, rd_nodes_pos.index(rd_node), 0, sim_time)
-        nodes.append(rn)
-
-    # 指定病毒投放节点
+    # # # 指定病毒投放节点
     pos[0] = (v_x, v_y)
-    nodes[0].x = v_x
-    nodes[0].y = v_y
-    nodes[0].set_state(3)
-    nodes_color[0] = 'iso'
-
-    # 指定补丁包投放节点
+    # # # 指定补丁包投放节点
     pos[1] = (r_x, r_y)
-    nodes[1].x = r_x
-    nodes[1].y = r_y
-
-    # 新建信息传播概率的矩阵
-    low = 1
-    high = 1
-    eta = random_np(low, high, nodes_num)
 
     # sim
-    # 得到点的边
-    g = nx.random_geometric_graph(nodes_num, r, pos=pos)
+    # # 得到点的边
+    g = nx.random_geometric_graph(nodes_num, g_r, pos=pos)
 
-    # draw graph
-    nx.draw_networkx_nodes(g, pos=pos, node_color=nodes_color,
-                           node_size=20)
-    # show graph
-    filename = 'WSNsim/WSNsim_{}.png'.format(0)
-    plt.savefig(filename, format='png')
-    keyFrames.append(filename)
+    # lines[0]
+    my_sim = []
+    for _ in range(5):
+        my_model_sim(open=my_open, spr=my_spr,
+                     eta_low=my_eta_low, eta_high=my_eta_high, r_t=r_t,
+                     rd_nodes_pos=rd_nodes_pos, nodes_num=nodes_num,
+                     sim_time=sim_time, graph=g, g_pos=pos, lines=my_sim
+                     )
+    lines.append(avg_lists(my_sim, 5))
 
-    # 感染概率 和 恢复概率
-    v = np.zeros((sim_time, nodes_num))
-    r = np.zeros((sim_time, nodes_num))
-    # 统计数据
-    inf_nums = [1]+[0 for _ in range(1, sim_time)]
-    rco_nums = [0]+[0 for _ in range(1, sim_time)]
-    sus_nums = [nodes_num-1]+[0 for _ in range(1, sim_time)]
-    iso_nums = [1]+[0 for _ in range(1, sim_time)]
-    com_nums = [0]+[0 for _ in range(1, sim_time)]
-    ins_nums = [0]+[0 for _ in range(1, sim_time)]
-    act_nums = [0]+[0 for _ in range(1, sim_time)]
-    count_states = [0, 0, 0, 0, 0]
-    for t in range(1, sim_time):
-        # 更新节点的感染概率和恢复概率
-        for nodei in nodes:
-            v_pi = 1
-            r_pi = 1
-            for nodej in nx.neighbors(g, nodei.id):
-                if nodes[nodej].is_com():
-                    v_pi *= (1 - eta[nodej, nodei.id])
-                if nodes[nodej].is_act():
-                    r_pi *= (1 - eta[nodej, nodei.id])
-            nodei.v = (1 - v_pi) * nodei.get_open(t)
-            nodei.r = (1 - r_pi) * nodei.get_open(t)
-            v[t, nodei.id] = (1 - v_pi) * nodei.get_open(t)
-            r[t, nodei.id] = (1 - r_pi) * nodei.get_open(t)
-
-        # 判断是否为补丁包投放时刻
-        if t == r_t:
-            nodes[1].set_state(1)
-            nodes[1].set_spr(t, sim_time, 'iso')
-
-        # 节点根据概率更新自身状态
-        count_states = [0, 0, 0, 0, 0]
-        for node in nodes:
-            count_states[node.get_state()] += 1
-            node.new_state(t, sim_time)
-            nodes_color[node.id] = node.state
-
-        # add count
-        inf_nums[t] = count_states[3]+count_states[4]
-        rco_nums[t] = count_states[1]+count_states[2]
-        sus_nums[t] = count_states[0]
-        ins_nums[t] = count_states[1]
-        act_nums[t] = count_states[2]
-        iso_nums[t] = count_states[3]
-        com_nums[t] = count_states[4]
-
-        # draw graph
-        nx.draw_networkx_nodes(g, pos=pos, node_color=nodes_color,
-                               node_size=20)
-        # show graph
-        filename = 'WSNsim/WSNsim_{}.png'.format(t)
-        plt.savefig(filename, format='png')
-        keyFrames.append(filename)
-
-    # end of sim
+    # lines[1]
+    # tang_sim = []
+    # for _ in range(5):
+    #     tang_model_sim(a=tang_a, s=tang_s, beta=tang_beta, rou=tang_rou,
+    #                    rd_nodes_pos=rd_nodes_pos, nodes_num=nodes_num,
+    #                    sim_time=sim_time, graph=g, g_pos=pos, lines=tang_sim
+    #                    )
+    # lines.append(avg_lists(tang_sim, 5))
+    #
+    # # lines[2]
+    # org_sim = []
+    # for _ in range(5):
+    #     org_model_sim(beta=tang_beta, rou=tang_rou, r_t=r_t,
+    #                   rd_nodes_pos=rd_nodes_pos, nodes_num=nodes_num,
+    #                   sim_time=sim_time, graph=g, g_pos=pos, lines=org_sim
+    #                   )
+    # lines.append(avg_lists(org_sim, 5))
 
     plt.clf()
     # print fig
-    plt.plot(inf_nums, 'r')
-    plt.plot(rco_nums, 'b')
-    # plt.plot(sus_nums, 'c')
-    plt.plot(iso_nums, 'r-.')
-    plt.plot(com_nums, 'r--')
-    plt.plot(ins_nums, 'b-.')
-    plt.plot(act_nums, 'b--')
+    plt.plot(lines[0], 'r')
+    # plt.plot(lines[1], 'b')
+    # plt.plot(lines[2], 'c')
     plt.savefig('test', format='png')

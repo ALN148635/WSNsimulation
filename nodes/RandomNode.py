@@ -15,19 +15,27 @@ class RandomNode(object):
         self.x = pos[0]
         self.y = pos[1]
         self.state = NODE_STATE[sta]
-        self.open = [random.choice([0, 1]) for _ in range(T)]
-        self.spr = [random.choice([0, 1]) for _ in range(T)]
+        self.open = [round(random.random(), 2) for _ in range(T)]#
+        self.spr = [round(random.random(), 2) for _ in range(T)]#
         self.v = 0.0
         self.r = 0.0
 
     def get_pos(self):
         return self.x, self.y
 
-    def get_open(self, t):
-        return self.open[t]
+    def get_open(self, t, open):
+        if self.open[t] > open:
+            rt = 1
+        else:
+            rt = 0
+        return rt
 
-    def get_spr(self, t):
-        return self.spr[t]
+    def get_spr(self, t, spr):
+        if self.spr[t] > spr:
+            rt = 1
+        else:
+            rt = 0
+        return rt
 
     def is_com(self):
         return self.state == 'com'
@@ -59,12 +67,12 @@ class RandomNode(object):
                 self.spr[i] = 0
         elif state == 'iso':
             for i in range(t, T):
-                self.spr[i] = random.choice([0, 1])
+                self.spr[i] = round(random.random(), 2)
         else:
             print('Set Spr Error!')
             return
 
-    def new_state(self, t, T):
+    def new_state(self, t, T, spr):
         # sus
         if self.state == 'sus':
             if self.v == 0 and self.r == 0:
@@ -78,7 +86,7 @@ class RandomNode(object):
             if self.r > (1 - self.r):
                 self.set_spr(t, T, self.state)
                 self.set_state(1)
-            elif self.get_spr(t):
+            elif self.get_spr(t, spr):
                 self.set_state(4)
             else:
                 self.set_state(3)
@@ -92,10 +100,10 @@ class RandomNode(object):
                 self.set_state(3)
         # ins
         elif self.state == 'ins':
-            if self.get_spr(t):
+            if self.get_spr(t, spr):
                 self.set_state(2)
         elif self.state == 'act':
-            if not self.get_spr(t):
+            if not self.get_spr(t, spr):
                 self.set_state(1)
         else:
             print('Node_state Error!')
