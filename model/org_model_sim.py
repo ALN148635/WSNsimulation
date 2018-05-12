@@ -28,12 +28,12 @@ def org_model_sim(beta, rou, r_t,
 
     # end of creat nodes
 
-    # draw graph
-    plt.clf()
-    nx.draw_networkx_nodes(graph, pos=g_pos, node_color=org_nodes_color, node_size=20)
-    # show graph
-    filename = 'WSNsim/WSNsim_org_{}.png'.format(0)
-    plt.savefig(filename, format='png')
+    # # draw graph
+    # plt.clf()
+    # nx.draw_networkx_nodes(graph, pos=g_pos, node_color=org_nodes_color, node_size=20)
+    # # show graph
+    # filename = 'WSNsim/WSNsim_org_{}.png'.format(0)
+    # plt.savefig(filename, format='png')
 
     # 统计数据
     org_sus_nums = [nodes_num - 1] + [0 for _ in range(1, sim_time)]
@@ -74,11 +74,11 @@ def org_model_sim(beta, rou, r_t,
         org_sus_nums[t] = org_states[0]
         org_rco_nums[t] = org_states[2]
 
-        # draw graph
-        plt.clf()
-        nx.draw_networkx_nodes(graph, pos=g_pos, node_color=org_nodes_color, node_size=20)
-        # show graph
-        filename = 'WSNsim/WSNsim_org_{}.png'.format(t)
-        plt.savefig(filename, format='png')
+        # # draw graph
+        # plt.clf()
+        # nx.draw_networkx_nodes(graph, pos=g_pos, node_color=org_nodes_color, node_size=20)
+        # # show graph
+        # filename = 'WSNsim/WSNsim_org_{}.png'.format(t)
+        # plt.savefig(filename, format='png')
 
     lines.append(org_inf_nums)

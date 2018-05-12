@@ -27,12 +27,12 @@ def tang_model_sim(a, s, beta, rou,
 
     # end of creat nodes
 
-    # draw graph
-    plt.clf()
-    nx.draw_networkx_nodes(graph, pos=g_pos, node_color=tang_nodes_color, node_size=20)
-    # show graph
-    filename = 'WSNsim/WSNsim_tang_{}.png'.format(0)
-    plt.savefig(filename, format='png')
+    # # draw graph
+    # plt.clf()
+    # nx.draw_networkx_nodes(graph, pos=g_pos, node_color=tang_nodes_color, node_size=20)
+    # # show graph
+    # filename = 'WSNsim/WSNsim_tang_{}.png'.format(0)
+    # plt.savefig(filename, format='png')
 
     # 统计数据
     tang_sus_nums = [nodes_num - 1] + [0 for _ in range(1, sim_time)]
@@ -68,12 +68,12 @@ def tang_model_sim(a, s, beta, rou,
         tang_ssus_nums[t] = tang_states[0]
         tang_sslp_nums[t] = tang_states[1]
 
-        # draw graph
-        nx.draw_networkx_nodes(graph, pos=g_pos, node_color=tang_nodes_color,
-                               node_size=20)
-        # show graph
-        filename = 'WSNsim/WSNsim_tang_{}.png'.format(t)
-        plt.savefig(filename, format='png')
+        # # draw graph
+        # nx.draw_networkx_nodes(graph, pos=g_pos, node_color=tang_nodes_color,
+        #                        node_size=20)
+        # # show graph
+        # filename = 'WSNsim/WSNsim_tang_{}.png'.format(t)
+        # plt.savefig(filename, format='png')
 
     # end of sim
     lines.append(tang_inf_nums)

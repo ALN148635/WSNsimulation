@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from nodes.RandomNode import RandomNode
 
 
-def my_model_sim(open, spr, eta_low, eta_high, r_t,
+def my_model_sim(open, spr, eta_low, eta_high, alp_low, alp_high, r_t,
                  rd_nodes_pos, nodes_num, sim_time, graph, g_pos,
                  lines):
     # 创建用于状态处理的随机节点
@@ -28,11 +28,11 @@ def my_model_sim(open, spr, eta_low, eta_high, r_t,
     # # # 新建信息传播概率的矩阵
     eta = random_np(eta_low, eta_high, nodes_num)
 
-    plt.clf()
-    nx.draw_networkx_nodes(graph, pos=g_pos, node_color=my_nodes_color, node_size=20)
-    # show graph
-    filename = 'WSNsim/WSNsim_{}.png'.format(0)
-    plt.savefig(filename, format='png')
+    # plt.clf()
+    # nx.draw_networkx_nodes(graph, pos=g_pos, node_color=my_nodes_color, node_size=20)
+    # # show graph
+    # filename = 'WSNsim/WSNsim_{}.png'.format(0)
+    # plt.savefig(filename, format='png')
 
     # 感染概率 和 恢复概率
     v = np.zeros((sim_time, nodes_num))
@@ -71,7 +71,7 @@ def my_model_sim(open, spr, eta_low, eta_high, r_t,
         # 节点根据概率更新自身状态
         count_states = [0, 0, 0, 0, 0]
         for node in my_nodes:
-            node.new_state(t, sim_time, spr)
+            node.new_state(t, sim_time, spr, alp_low, alp_high)
             count_states[node.get_state()] += 1
             my_nodes_color[node.id] = node.state
 
@@ -84,13 +84,13 @@ def my_model_sim(open, spr, eta_low, eta_high, r_t,
         iso_nums[t] = count_states[3]
         com_nums[t] = count_states[4]
 
-        # draw graph
-        plt.clf()
-        nx.draw_networkx_nodes(graph, pos=g_pos, node_color=my_nodes_color,
-                               node_size=20)
-        # show graph
-        filename = 'WSNsim/WSNsim_{}.png'.format(t)
-        plt.savefig(filename, format='png')
+        # # draw graph
+        # plt.clf()
+        # nx.draw_networkx_nodes(graph, pos=g_pos, node_color=my_nodes_color,
+        #                        node_size=20)
+        # # show graph
+        # filename = 'WSNsim/WSNsim_{}.png'.format(t)
+        # plt.savefig(filename, format='png')
 
     # end of sim
     lines.append(inf_nums)

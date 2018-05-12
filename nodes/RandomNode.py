@@ -25,16 +25,16 @@ class RandomNode(object):
 
     def get_open(self, t, open):
         if self.open[t] > open:
-            rt = 1
-        else:
             rt = 0
+        else:
+            rt = 1
         return rt
 
     def get_spr(self, t, spr):
         if self.spr[t] > spr:
-            rt = 1
-        else:
             rt = 0
+        else:
+            rt = 1
         return rt
 
     def is_com(self):
@@ -72,7 +72,7 @@ class RandomNode(object):
             print('Set Spr Error!')
             return
 
-    def new_state(self, t, T, spr):
+    def new_state(self, t, T, spr, alp_low, alp_high):
         # sus
         if self.state == 'sus':
             if self.v == 0 and self.r == 0:
@@ -92,7 +92,7 @@ class RandomNode(object):
                 self.set_state(3)
         # com
         elif self.state == 'com':
-            alpha = random.uniform(0.5, 1)
+            alpha = random.uniform(alp_low, alp_high)
             if self.r > (1 - self.r):
                 self.set_state(1)
             elif alpha > (1-alpha):
