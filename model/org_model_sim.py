@@ -7,14 +7,15 @@ from nodes.OrgNode import OrgNode
 
 def org_model_sim(beta, rou, r_t,
                   rd_nodes_pos, nodes_num, sim_time, graph, g_pos,
-                  lines):
+                  sur_type):
     # 创建用于状态处理的随机节点
     # creat nodes
     # # org_model 节点
+    lines = []
     org_nodes = []
     for rd_node in rd_nodes_pos:
         tn = OrgNode(rd_node, rd_nodes_pos.index(rd_node), 0,
-                      beta=beta, rou=rou)
+                     beta=beta, rou=rou)
         org_nodes.append(tn)
     org_nodes_color = ['o_sus'] * nodes_num
 
@@ -81,4 +82,12 @@ def org_model_sim(beta, rou, r_t,
         # filename = 'WSNsim/WSNsim_org_{}.png'.format(t)
         # plt.savefig(filename, format='png')
 
-    lines.append(org_inf_nums)
+    for s_type in sur_type:
+        if s_type in 'o_inf':
+            lines.append(org_inf_nums)
+        elif s_type in 'o_rco':
+            lines.append(org_rco_nums)
+        elif s_type in 'o_sus':
+            lines.append(org_sus_nums)
+
+    return lines

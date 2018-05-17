@@ -7,7 +7,8 @@ from nodes.TangNode import TangNode
 
 def tang_model_sim(a, s, beta, rou,
                    rd_nodes_pos, nodes_num, sim_time, graph, g_pos,
-                   lines):
+                   sur_type):
+    lines = []
     # 创建用于状态处理的随机节点
     # creat nodes
     # # tang_model 节点
@@ -76,4 +77,18 @@ def tang_model_sim(a, s, beta, rou,
         # plt.savefig(filename, format='png')
 
     # end of sim
-    lines.append(tang_inf_nums)
+    for s_type in sur_type:
+        if s_type == 'sus':
+            lines.append(tang_sus_nums)
+        elif s_type == 'inf':
+            lines.append(tang_inf_nums)
+        elif s_type == 't_sus':
+            lines.append(tang_ssus_nums)
+        elif s_type == 't_sslp':
+            lines.append(tang_sslp_nums)
+        elif s_type == 't_inf':
+            lines.append(tang_iinf_nums)
+        elif s_type == 't_islp':
+            lines.append(tang_islp_nums)
+
+    return lines
