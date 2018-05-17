@@ -2,7 +2,7 @@ import random
 
 
 # return List[(int, int)...]
-def get_random_position(density, side_width, side_height):#side_length):
+def get_random_position(density, side_width, side_height):
     d = density
     # h = side_length
     node_num = int(d*side_width*side_height)

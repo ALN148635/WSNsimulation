@@ -72,7 +72,7 @@ class RandomNode(object):
             print('Set Spr Error!')
             return
 
-    def new_state(self, t, T, spr, alp_low, alp_high):
+    def new_state(self, t, T, spr, alpha):
         # sus
         if self.state == 'sus':
             if self.v == 0 and self.r == 0:
@@ -92,10 +92,11 @@ class RandomNode(object):
                 self.set_state(3)
         # com
         elif self.state == 'com':
-            alpha = random.uniform(alp_low, alp_high)
+            st = random.random()
+            alpha = alpha
             if self.r > (1 - self.r):
                 self.set_state(1)
-            elif alpha > (1-alpha):
+            elif alpha > st:
                 self.set_spr(t, T, self.state)
                 self.set_state(3)
         # ins

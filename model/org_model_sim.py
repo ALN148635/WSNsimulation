@@ -53,7 +53,7 @@ def org_model_sim(beta, rou, r_t,
 
         # 判断是否为补丁包投放时刻
         if t == r_t:
-            org_nodes[1].state = 'rco'
+            org_nodes[1].state = 'o_rco'
 
         org_rco_nodes = []
         for org_node in org_nodes:

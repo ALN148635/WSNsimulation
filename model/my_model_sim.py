@@ -8,9 +8,10 @@ from matplotlib import pyplot as plt
 from nodes.RandomNode import RandomNode
 
 
-def my_model_sim(open, spr, eta_low, eta_high, alp_low, alp_high, r_t,
+def my_model_sim(open, spr, eta_low, eta_high, alpha, r_t, beta, rho,
                  rd_nodes_pos, nodes_num, sim_time, graph, g_pos,
-                 lines):
+                 sur_type):
+    lines = []
     # 创建用于状态处理的随机节点
     # my_model 节点
     my_nodes = []
@@ -60,8 +61,8 @@ def my_model_sim(open, spr, eta_low, eta_high, alp_low, alp_high, r_t,
                     r_pi *= (1 - eta[nodej, nodei.id])
             nodei.v = (1 - v_pi) * nodei.get_open(t, open)
             nodei.r = (1 - r_pi) * nodei.get_open(t, open)
-            v[t, nodei.id] = (1 - v_pi) * nodei.get_open(t, open)
-            r[t, nodei.id] = (1 - r_pi) * nodei.get_open(t, open)
+            v[t, nodei.id] = (1 - v_pi) * nodei.get_open(t, open) * beta
+            r[t, nodei.id] = (1 - r_pi) * nodei.get_open(t, open) * rho
 
         # 判断是否为补丁包投放时刻
         if t == r_t:
@@ -71,7 +72,7 @@ def my_model_sim(open, spr, eta_low, eta_high, alp_low, alp_high, r_t,
         # 节点根据概率更新自身状态
         count_states = [0, 0, 0, 0, 0]
         for node in my_nodes:
-            node.new_state(t, sim_time, spr, alp_low, alp_high)
+            node.new_state(t, sim_time, spr, alpha)
             count_states[node.get_state()] += 1
             my_nodes_color[node.id] = node.state
 
@@ -93,7 +94,13 @@ def my_model_sim(open, spr, eta_low, eta_high, alp_low, alp_high, r_t,
         # plt.savefig(filename, format='png')
 
     # end of sim
-    lines.append(inf_nums)
+    for type in sur_type:
+        if type == 'inf':
+            lines.append(inf_nums)
+        elif type == 'rco':
+            lines.append(rco_nums)
+
+    return lines
 
 
 def random_np(low, high, nodes_num):
