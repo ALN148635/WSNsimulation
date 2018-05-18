@@ -30,7 +30,7 @@ def avg_lists(lists, l_num):
     return avg
 
 
-def draw_graph_2_5(density, side_width, side_height, sim_time, g_r,
+def draw_graph_2_10(density, side_width, side_height, sim_time, g_r,
                v_x, v_y, r_x, r_y, r_t):
     lines = []
     # 得到随机节点的坐标
@@ -52,16 +52,35 @@ def draw_graph_2_5(density, side_width, side_height, sim_time, g_r,
 
     # lines[1]
     inf_sim = []
-    sus_sim = []
-    for _ in range(5):
+    for _ in range(10):
         org_sim = org_sis_model_sim(beta=0.6, rou=0.3,
                                     rd_nodes_pos=rd_nodes_pos, nodes_num=nodes_num,
                                     sim_time=sim_time, graph=g, g_pos=pos,
-                                    sur_type=['inf', 'sus']
+                                    sur_type=['inf']
                                     )
         inf_sim.append(org_sim[0])
-        sus_sim.append(org_sim[1])
-    lines.append(avg_lists(inf_sim, 5))
-    lines.append(avg_lists(sus_sim, 5))
+    lines.append(avg_lists(inf_sim, 10))
+
+    # lines[2]
+    inf_sim = []
+    for _ in range(10):
+        tang_sim = tang_model_sim(a=0.5, s=0.5, beta=0.6, rou=0.3,
+                                  rd_nodes_pos=rd_nodes_pos, nodes_num=nodes_num,
+                                  sim_time=sim_time, graph=g, g_pos=pos,
+                                  sur_type=['inf']
+                                  )
+        inf_sim.append(tang_sim[0])
+    lines.append(avg_lists(inf_sim, 10))
+
+    # lines[4]
+    inf_sim = []
+    for _ in range(10):
+        tang_sim = tang_model_sim(a=0.5, s=0.5, beta=0.6, rou=0.7,
+                                  rd_nodes_pos=rd_nodes_pos, nodes_num=nodes_num,
+                                  sim_time=sim_time, graph=g, g_pos=pos,
+                                  sur_type=['inf']
+                                  )
+        inf_sim.append(tang_sim[0])
+    lines.append(avg_lists(inf_sim, 10))
 
     return lines

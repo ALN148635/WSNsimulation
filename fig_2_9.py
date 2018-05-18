@@ -4,7 +4,9 @@ import math
 import matplotlib.pyplot as plt
 import networkx as nx
 
+from model.my_model_sim import my_model_sim
 from model.org_model_sim import org_model_sim
+from model.tang_model_sim import tang_model_sim
 from nodes.RandomPosition import get_random_position
 
 
@@ -27,8 +29,8 @@ def avg_lists(lists, l_num):
     return avg
 
 
-def draw_graph_2_7(density, side_width, side_height, sim_time, g_r,
-                   v_x, v_y, r_x, r_y, r_t):
+def draw_graph_2_9(density, side_width, side_height, sim_time, g_r,
+               v_x, v_y, r_x, r_y, r_t):
     lines = []
     # 得到随机节点的坐标
     rd_nodes_pos = get_random_position(density, side_width, side_height)
@@ -47,33 +49,18 @@ def draw_graph_2_7(density, side_width, side_height, sim_time, g_r,
     # # 得到点的边
     g = nx.random_geometric_graph(nodes_num, g_r, pos=pos)
 
-    # lines[0][1]
+    # lines[1]
     inf_sim = []
     sus_sim = []
-    rco_sim = []
     for _ in range(5):
-        org_sim = org_model_sim(beta=0.3, rou=1, r_t=r_t,
-                                rd_nodes_pos=rd_nodes_pos, nodes_num=nodes_num,
-                                sim_time=sim_time, graph=g, g_pos=pos,
-                                sur_type=['inf', 'sus', 'rco'])
-        inf_sim.append(org_sim[0])
-        sus_sim.append(org_sim[1])
-        rco_sim.append(org_sim[2])
+        tang_sim = tang_model_sim(a=0.5, s=0.5, beta=0.3, rou=0.3,
+                                  rd_nodes_pos=rd_nodes_pos, nodes_num=nodes_num,
+                                  sim_time=sim_time, graph=g, g_pos=pos,
+                                  sur_type=['inf', 'sus']
+                                  )
+        inf_sim.append(tang_sim[0])
+        sus_sim.append(tang_sim[1])
     lines.append(avg_lists(inf_sim, 5))
     lines.append(avg_lists(sus_sim, 5))
-    lines.append(avg_lists(rco_sim, 5))
 
-    # plt.clf()
-    # plt.ylabel('I(t)')
-    # plt.xlabel('Time/Unit of Time')
-    # plt.xlim(0, sim_time)
-    # # print fig
-    # plt.plot(lines[0], 'r', label='a')
-    # plt.plot(lines[1], 'com', label='b')
-    # plt.plot(lines[2], 'b', label='c')
-    # plt.plot(lines[3], 'g', label='d')
-    # # plt.plot(lines[4], 'sus', label='e')
-    # # plt.plot(lines[5], 'g', label='f')
-    # plt.legend(loc='lower right')
-    # plt.savefig('test', format='png')
     return lines

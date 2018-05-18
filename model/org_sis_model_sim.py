@@ -2,10 +2,10 @@
 import networkx as nx
 from matplotlib import pyplot as plt
 
-from nodes.OrgNode import OrgNode
+from nodes.OrgSISNode import OrgSISNode
 
 
-def org_model_sim(beta, rou, r_t,
+def org_sis_model_sim(beta, rou,
                   rd_nodes_pos, nodes_num, sim_time, graph, g_pos,
                   sur_type):
     # 创建用于状态处理的随机节点
@@ -14,7 +14,7 @@ def org_model_sim(beta, rou, r_t,
     lines = []
     org_nodes = []
     for rd_node in rd_nodes_pos:
-        tn = OrgNode(rd_node, rd_nodes_pos.index(rd_node), 0,
+        tn = OrgSISNode(rd_node, rd_nodes_pos.index(rd_node), 0,
                      beta=beta, rou=rou)
         org_nodes.append(tn)
     org_nodes_color = ['o_sus'] * nodes_num
@@ -37,7 +37,6 @@ def org_model_sim(beta, rou, r_t,
     # 统计数据
     org_sus_nums = [nodes_num - 1] + [0 for _ in range(1, sim_time)]
     org_inf_nums = [1] + [0 for _ in range(1, sim_time)]
-    org_rco_nums = [0] + [0 for _ in range(1, sim_time)]
 
     for t in range(1, sim_time):
         # tang model
@@ -50,29 +49,15 @@ def org_model_sim(beta, rou, r_t,
             for nodej in nx.neighbors(graph, inf_node.id):
                 org_nodes[nodej].new_inf_state()
 
-        # 判断是否为补丁包投放时刻
-        if t == r_t:
-            org_nodes[1].state = 'o_rco'
-
-        if t >= r_t:
-            org_rco_nodes = []
-            for org_node in org_nodes:
-                if org_node.state == 'o_rco':
-                    org_rco_nodes.append(org_node)
-
-            for rco_node in org_rco_nodes:
-                for nodej in nx.neighbors(graph, rco_node.id):
-                    org_nodes[nodej].new_rco_state()
-
-        org_states = [0, 0, 0]
+        org_states = [0, 0]
         for org_node in org_nodes:
+            org_node.new_state()
             org_states[org_node.get_state()] += 1
             org_nodes_color[org_node.id] = org_node.state
 
         # add count
         org_inf_nums[t] = org_states[1]
         org_sus_nums[t] = org_states[0]
-        org_rco_nums[t] = org_states[2]
 
         # # draw graph
         # plt.clf()
@@ -84,8 +69,6 @@ def org_model_sim(beta, rou, r_t,
     for s_type in sur_type:
         if s_type in 'o_inf':
             lines.append(org_inf_nums)
-        elif s_type in 'o_rco':
-            lines.append(org_rco_nums)
         elif s_type in 'o_sus':
             lines.append(org_sus_nums)
 
