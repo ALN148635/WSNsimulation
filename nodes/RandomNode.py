@@ -72,18 +72,66 @@ class RandomNode(object):
             print('Set Spr Error!')
             return
 
+    # def new_state(self, t, T, spr, alpha):
+    #     # sus
+    #     if self.state == 'sus':
+    #         if self.v == 0 and self.r == 0:
+    #             return
+    #         elif self.v > self.r:
+    #             self.set_state(3)
+    #         else:
+    #             self.set_state(1)
+    #     # iso
+    #     elif self.state == 'iso':
+    #         if self.r > (1 - self.r):
+    #             self.set_spr(t, T, self.state)
+    #             self.set_state(1)
+    #         elif self.get_spr(t, spr):
+    #             self.set_state(4)
+    #         else:
+    #             self.set_state(3)
+    #     # com
+    #     elif self.state == 'com':
+    #         st = random.random()
+    #         alpha = alpha
+    #         if self.r > (1 - self.r):
+    #             self.set_state(1)
+    #         elif self.get_spr(t, spr) == 0:
+    #             self.set_state(3)
+    #         elif alpha > st:
+    #             self.set_spr(t, T, self.state)
+    #             self.set_state(3)
+    #     # ins
+    #     elif self.state == 'ins':
+    #         if self.get_spr(t, spr):
+    #             self.set_state(2)
+    #     elif self.state == 'act':
+    #         if not self.get_spr(t, spr):
+    #             self.set_state(1)
+    #     else:
+    #         print('Node_state Error!')
+    #         return
+
+    # def get_id(self):
+    #     return self.id
+
     def new_state(self, t, T, spr, alpha):
+        st = random.random()
         # sus
         if self.state == 'sus':
             if self.v == 0 and self.r == 0:
                 return
-            elif self.v > self.r:
+            elif self.v > st:
                 self.set_state(3)
-            else:
+            elif self.v + self.r > st:
                 self.set_state(1)
+            # elif self.v > self.r:
+            #     self.set_state(3)
+            # else:
+            #     self.set_state(1)
         # iso
         elif self.state == 'iso':
-            if self.r > (1 - self.r):
+            if self.r > st:
                 self.set_spr(t, T, self.state)
                 self.set_state(1)
             elif self.get_spr(t, spr):
@@ -92,11 +140,12 @@ class RandomNode(object):
                 self.set_state(3)
         # com
         elif self.state == 'com':
-            st = random.random()
-            alpha = alpha
-            if self.r > (1 - self.r):
+            st_a = random.random()
+            if self.r > st:
                 self.set_state(1)
-            elif alpha > st:
+            # elif self.get_spr(t, spr) == 0:
+            #     self.set_state(3)
+            elif alpha > st_a:
                 self.set_spr(t, T, self.state)
                 self.set_state(3)
         # ins
@@ -109,6 +158,3 @@ class RandomNode(object):
         else:
             print('Node_state Error!')
             return
-
-    # def get_id(self):
-    #     return self.id

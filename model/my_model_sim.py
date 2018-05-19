@@ -10,7 +10,7 @@ from nodes.RandomNode import RandomNode
 
 def my_model_sim(open, spr, eta_low, eta_high, alpha, r_t, beta, rho,
                  rd_nodes_pos, nodes_num, sim_time, graph, g_pos,
-                 sur_type):
+                 sur_type, pic=False, picName='_'):
     lines = []
     # 创建用于状态处理的随机节点
     # my_model 节点
@@ -29,11 +29,12 @@ def my_model_sim(open, spr, eta_low, eta_high, alpha, r_t, beta, rho,
     # # # 新建信息传播概率的矩阵
     eta = random_np(eta_low, eta_high, nodes_num)
 
-    # plt.clf()
-    # nx.draw_networkx_nodes(graph, pos=g_pos, node_color=my_nodes_color, node_size=20)
-    # # show graph
-    # filename = 'WSNsim/WSNsim_{}.png'.format(0)
-    # plt.savefig(filename, format='png')
+    if pic:
+        plt.clf()
+        nx.draw_networkx_nodes(graph, pos=g_pos, node_color=my_nodes_color, node_size=20)
+        # show graph
+        filename = 'WSN{}sim/WSNsim_{}.png'.format(picName, 0)
+        plt.savefig(filename, format='png')
 
     # 感染概率 和 恢复概率
     v = np.zeros((sim_time, nodes_num))
@@ -76,6 +77,11 @@ def my_model_sim(open, spr, eta_low, eta_high, alpha, r_t, beta, rho,
             count_states[node.get_state()] += 1
             my_nodes_color[node.id] = node.state
 
+        # # temp
+        # if t == 40:
+        #     for i in range(nodes_num):
+        #         print(str(v[t, i]) + ':' + str(r[t, i])+':'+my_nodes[i].state)
+
         # add count
         inf_nums[t] = count_states[3] + count_states[4]
         rco_nums[t] = count_states[1] + count_states[2]
@@ -85,13 +91,14 @@ def my_model_sim(open, spr, eta_low, eta_high, alpha, r_t, beta, rho,
         iso_nums[t] = count_states[3]
         com_nums[t] = count_states[4]
 
-        # # draw graph
-        # plt.clf()
-        # nx.draw_networkx_nodes(graph, pos=g_pos, node_color=my_nodes_color,
-        #                        node_size=20)
-        # # show graph
-        # filename = 'WSNsim/WSNsim_{}.png'.format(t)
-        # plt.savefig(filename, format='png')
+        if pic:
+            # draw graph
+            plt.clf()
+            nx.draw_networkx_nodes(graph, pos=g_pos, node_color=my_nodes_color,
+                                   node_size=20)
+            # show graph
+            filename = 'WSN{}sim/WSNsim_{}.png'.format(picName, t)
+            plt.savefig(filename, format='png')
 
     # end of sim
     for type in sur_type:
